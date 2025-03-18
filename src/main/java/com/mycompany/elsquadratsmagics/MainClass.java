@@ -8,7 +8,7 @@ package com.mycompany.elsquadratsmagics;
  *
  * @author Bea i Yamila
  */
-public class ElsQuadratsMagics {
+public class MainClass {
 
     public static void main(String[] args) {
         

@@ -9,6 +9,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>23</maven.compiler.source>
         <maven.compiler.target>23</maven.compiler.target>
-        <exec.mainClass>com.mycompany.elsquadratsmagics.ElsQuadratsMagics</exec.mainClass>
+        <exec.mainClass>com.mycompany.elsquadratsmagics.MainClass</exec.mainClass>
     </properties>
 </project>
