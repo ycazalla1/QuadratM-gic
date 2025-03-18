@@ -18,53 +18,95 @@ public class MainClass {
 
         int num = 0;
         String resposta, cadena, subCadena = "";
+        boolean triarDimensions = false;
         final int DIMENSIONS_DEFECTE = 3;
-        
+
         int[][] llistaNumeros = new int[DIMENSIONS_DEFECTE][DIMENSIONS_DEFECTE];
 
         System.out.print("Dimensions de la capsa per defecte: " + DIMENSIONS_DEFECTE
-                + "X" + DIMENSIONS_DEFECTE + "\nVols modificar les dimensions"
-                        + "per defecte (S/N): ");
-        resposta = sc.nextLine();
+                    + "X" + DIMENSIONS_DEFECTE + "\nVols modificar les dimensions"
+                    + "per defecte (S/N): ");
+        do {
+            resposta = sc.nextLine();
 
-        if (!resposta.equalsIgnoreCase("S") && !resposta.equalsIgnoreCase("N")) {
-            System.out.println("ERROR. Resposta incorrecte.");
-        } else if (resposta.equalsIgnoreCase("S")) {
-            llistaNumeros = demanarDimensions();
-        }
-        
-        for (int i = 0; i < llistaNumeros.length; i++) {
-            System.out.println("--- Fila " + (i+1) + " ---");
-            for (int j = 0; j < llistaNumeros[i].length; j++) {
-                System.out.print("Columna " + (j+1) + " : ");
-                num = sc.nextInt();
+            if (!resposta.equalsIgnoreCase("S") && !resposta.equalsIgnoreCase("N")) {
+                System.err.print("ERROR. Resposta incorrecte."
+                        + "\nTorna a ficar una resposta (S/N): ");
+            } else if (resposta.equalsIgnoreCase("S")) {
+                llistaNumeros = demanarDimensions();
+                triarDimensions = true;
             }
-        }
+
+        } while (!triarDimensions);
+
+        omplirMatriu(llistaNumeros);
 
         QuadratMagic qm = new QuadratMagic();
-        qm.esMagic(llistaNumeros);
+        boolean magic = qm.esMagic(llistaNumeros);
+
+        if (magic) {
+            System.out.println("És un quadrat màgic.");
+        } else {
+            System.out.println("No és un quadrat màgic.");
+        }
 
     }
 
     public static int[][] demanarDimensions() {
-        
-        Scanner sc = new Scanner(System.in);
 
+        int dimensions = 0;
         int[][] llistaNumeros;
-        int fila, columna;
+        boolean dmsCorrecte = false;
 
-        System.out.println("Introdueix les dimensions del quadrat:");
+        System.out.print("Introdueix les dimensions del quadrat: ");
+        do {
+            Scanner sc = new Scanner(System.in);
+            if (sc.hasNextInt()) {
+                dimensions = sc.nextInt();
+                if (dimensions <= 0) {
+                    System.err.print("ERROR. No és un nombre positiu."
+                        + "\nTorna'l a introduïr: ");
+                } else {
+                    dmsCorrecte = true;
+                }
+            } else {
+                System.err.print("ERROR. No és un nombre enter."
+                        + "\nTorna'l a introduïr: ");
+            }
+        } while (!dmsCorrecte);
 
-        System.out.print("\t- Files: ");
-        fila = sc.nextInt();
+        llistaNumeros = new int[dimensions][dimensions];
 
-        System.out.print("\t- Columnes: ");
-        columna = sc.nextInt();
-
-        llistaNumeros = new int[fila][columna];
-        
         return llistaNumeros;
 
+    }
+    
+    public static void omplirMatriu(int[][] matriu) {
+        
+        int num;
+        boolean numCorrecte = false;
+        
+        for (int i = 0; i < matriu.length; i++) {
+            System.out.println("--- Fila " + (i + 1) + " ---");
+            for (int j = 0; j < matriu[i].length; j++) {
+                do {
+                    Scanner sc = new Scanner(System.in);
+                    System.out.print("Columna " + (j + 1) + " : ");
+                    if (sc.hasNextInt()) {
+                        num = sc.nextInt();
+                        if (num <= 0) {
+                            System.err.println("ERROR. No és un nombre positiu.");
+                        } else {
+                            numCorrecte = true;
+                        }
+                    } else {
+                        System.err.println("ERROR. No és un nombre enter.");
+                    }
+                } while (!numCorrecte);
+                
+                
+            }
+        }
     }
 
 }
