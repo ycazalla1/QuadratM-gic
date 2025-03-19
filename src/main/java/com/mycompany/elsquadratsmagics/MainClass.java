@@ -6,157 +6,177 @@ package com.mycompany.elsquadratsmagics;
 import java.util.Scanner;
 
 /**
- * Classe principal.
- * És on es demana a l'usuari per les dimensions del quadrat i el seu contingut.
+ * Classe principal. És on es demana a l'usuari per les dimensions del quadrat i
+ * el seu contingut.
+ *
  * @author Bea i Yamila
  */
 public class MainClass {
 
     /**
      * Mètode main
-     * @param args 
+     *
+     * @param args
      */
     public static void main(String[] args) {
 
-        // Declaració de l'escàner
+        // Declaració de variables
+        String resposta; // String per saber si vol una longitud personalitzada
+        // Array per guardar la cadena de numeros de cada columna
+        String[] cadenaNums;
+        int num; //int per guardar els numeros de la array
+        QuadratMagic qm = null; // Instància de QuadratMagic incialitzada com null
+        /*
+            boolean per saber si ha introduït bé la resposta i guardar el valor
+            del mètode de la classe QuadratMagic
+        */
+        boolean respostaCorrecte = false, magic;
+        // Finals afirmatiu i negatiu
+        final String VALOR_PERSONALITZAT = "S", VALOR_DEFECTE = "N";
+
+        // Declaració d'un escànner
         Scanner sc = new Scanner(System.in);
 
-        // Declaració de variables
-        String resposta;
-        // Controla si l'usuari vol modificar les dimensions
-        boolean triarDimensions = false;
-        // Constant per les dimensions per defecte del quadrat
-        final int DIMENSIONS_DEFECTE = 3;
+        // Missatge per mostrar les dimensions per defecte
+        System.out.println("Dimensions de la capsa per defecte: 3X3");
+        // Missatge per preguntar si vol personalitzar les dimensions
+        System.out.print("Vols modificar les dimensions per defecte (S/N): ");
 
-        // Creació d'una matriu amb les dimensions per defecte
-        int[][] llistaNumeros = new int[DIMENSIONS_DEFECTE][DIMENSIONS_DEFECTE];
-
-        // Missatge per confirmar si vol modificar les dimensions
-        System.out.print("Dimensions de la capsa per defecte: " + DIMENSIONS_DEFECTE
-                    + "X" + DIMENSIONS_DEFECTE + "\nVols modificar les dimensions"
-                    + "per defecte (S/N): ");
-        // Bucle per comprovar que la resposta és vàlida
+        // do-while per comprovar si la resposta és correcte o no
         do {
+            // Guarda la cadena de text en la variable
             resposta = sc.nextLine();
 
-            /* 
-                Si la resposta no és "S" ni "N", es mostra un missatge d'error i
-                es torna a demanar la resposta
-            */
-            if (!resposta.equalsIgnoreCase("S") && !resposta.equalsIgnoreCase("N")) {
-                System.err.print("ERROR. Resposta incorrecte."
-                        + "\nTorna a ficar una resposta (S/N): ");
-            } else if (resposta.equalsIgnoreCase("S")) {
-                // Si no, crida al mètode demanarDimensions()
-                llistaNumeros = demanarDimensions();
-                // triarDimensions es fica cert per sortir del bucle
-                triarDimensions = true;
+            // Condicional per comprovar si vol o no personalitzar la longitud
+            if (resposta.equalsIgnoreCase(VALOR_PERSONALITZAT)) {
+                // Si és que sí, li pregunta per la longitud
+                System.out.print("Introdueix una longitud: ");
+                /*
+                    Crida al constructor amb paràmetre i guarda el valor del
+                    mètode demanarLongitud()
+                */
+                qm = new QuadratMagic(demanarLongitud());
+                // Fa certa la varaiable booleana per sortir del bucle
+                respostaCorrecte = true;
+            } else if (resposta.equalsIgnoreCase(VALOR_DEFECTE)) {
+                // // Si és que no, crida al consctructor per defecte
+                qm = new QuadratMagic();
+                // Fa certa la varaiable booleana per sortir del bucle
+                respostaCorrecte = true;
+            } else {
+                // Si no és cap, mostra un missatge d'error
+                System.out.print("ERROR. Resposta incorrecte."
+                        + "\nTorna a introduir-la (S/N): ");
             }
+        } while (!respostaCorrecte);
 
-        } while (!triarDimensions);
+        // Missatge  per indicar que farem i instruccions a seguir
+        System.out.println("\n--- Ompliment del quadrat màgic per files ---"
+                + "\nNota: separar els nombres per ',', espais o '.'");
+        
+        // Primer "for" per recòrrer la matriu per files
+        for (int i = 0; i < qm.matriu.length; i++) {
+            // S'imprimeix la fila on estem situats
+                System.out.print("Fila " + (i + 1) + ": ");
+                // Guarda el valor del mètode llegirEnterTeclat() en l'array
+                cadenaNums = llegirEnterTeclat();
+            // Segon "for" per recòrrer la matriu per columnes
+            for (int j = 0; j < qm.matriu[i].length; j++) {
+                /*
+                    Guarda el valor de cada posició de l'array en un int
+                    Ho fa fent una conversió de String a int
+                */
+                num = Integer.parseInt(cadenaNums[j]);
+                /*
+                    Crida al mètode setValorMatriu, on la "i" són les files,
+                    la "j" són les columnes i num els valors a introduir
+                */ 
+                qm.setValorMatriu(i, j, num);
+            }
+        }
 
-        // Crida al mètode per omplir la matriu
-        omplirMatriu(llistaNumeros);
+        /*
+            Crida al mètode esMagic(), ficant com a paràmetre la nostre matriu,
+            per comprovar si és un quadrat màgic o no
+        */
+        magic = qm.esMagic(qm.matriu);
 
-        // Crea una instància de QuadratMagic
-        QuadratMagic qm = new QuadratMagic();
-        // Crida al mètode esMagic() per verificar si és màgic
-        boolean magic = qm.esMagic(llistaNumeros);
-
-        // Si magic es cert vol dir que és un quadrat magic; si no, no
+        // Condicional per mirar si el valor de magic és cert o no
         if (magic) {
+            // Si ho és, mostra el missatge de que és un quadrat màgic
             System.out.println("És un quadrat màgic.");
         } else {
+            // Si no ho és, mostra el missatge de que no és un quadrat màgic
             System.out.println("No és un quadrat màgic.");
         }
 
     }
 
     /**
-     * Mètode per demanar les dimensions del quadrat.
-     * @return Matriu amb les dimensions.
+     * Mètode per llegir cadenes de numeros separats per comes, punts i espais
+     * @return una array de tipus String amb els valors guardats
      */
-    public static int[][] demanarDimensions() {
+    public static String[] llegirEnterTeclat() {
 
-        // Declaracions de varibles
-        int dimensions = 0; // Variable per emmagatzemar les dimensions
-        // Matriu que es crearà amb les dimensions triades
-        int[][] llistaNumeros;
-        // Controla si les dimensions introduïdes són correctes
-        boolean dmsCorrecte = false;
+        // Declaració de l'escàner
+        Scanner sc = new Scanner(System.in);
 
-        // Es demana a l'usuari que introdueixi les dimensions
-        System.out.print("Introdueix les dimensions del quadrat: ");
-        // Bucle per assegurar-se que l'usuari introdueix un número enter positiu
+        // Declaració de Strings
+        String cadena;
+        // final per especificar quins símbols faran de separador
+        final String spl = "[,\\s\\.]";
+        // Declaració de l'array per guardar els nombres ja separats
+        String[] nums;
+
+        // Demenem una cadena de nombres a l'usuari
+        cadena = sc.nextLine();
+
+        // Separa la cadena i guarda els valors en l'array
+        nums = cadena.split(spl);
+
+        // Retorna el resultat de l'array
+        return nums;
+    }
+
+    /**
+     * Mètode per demanar una longitud per definir les dimensions del quadrat
+     * @return un int amb la longitud
+     */
+    public static int demanarLongitud() {
+        
+        //Declaració de variables
+        int longitud = 0; // int per guardar la longitud
+        // boolean per saber que és una longitud correcte
+        boolean numCorrecte = false;
+        // final per dir el mínim de longitud
+        final int MINIM_LONGITUD = 2;
+
+        // do-while per tornar a preguntar si és un longitud invàlida
         do {
+            // Declaració de l'escàner
             Scanner sc = new Scanner(System.in);
+            // Condicional per saber si és enter l'entrada de l'usuari
             if (sc.hasNextInt()) {
-                // Si és enter guarda guarda el valor en la variable
-                dimensions = sc.nextInt();
-                if (dimensions <= 0) {
-                    // Si no és positiu surt un missatge d'error
-                    System.err.print("ERROR. No és un nombre positiu."
-                        + "\nTorna'l a introduïr: ");
+                // Guarda el valor si és enter
+                longitud = sc.nextInt();
+                // Condicional intern per saber si és compleix el mínim de longitud
+                if (longitud >= MINIM_LONGITUD) {
+                    // Si ho compleix surt del bucle
+                    numCorrecte = true;
                 } else {
-                    // Si és, surt del bucle
-                    dmsCorrecte = true;
+                    // Si no, surt un missatge d'error i no surt del bucle
+                    System.err.print("ERROR. No és un nombre positiu."
+                            + "\nTorna a introduir de nou el valor: ");
                 }
             } else {
-                // Si no és enter, surt un missatge d'error
+                // Si no és enter, surt un missatge d'error i no surt del bucle
                 System.err.print("ERROR. No és un nombre enter."
-                        + "\nTorna'l a introduïr: ");
+                        + "\nTorna a introduir de nou el valor: ");
             }
-        } while (!dmsCorrecte);
+        } while (!numCorrecte);
 
-        // Assigna a la matriu les dimensions especificades per l'usuari
-        llistaNumeros = new int[dimensions][dimensions];
-
-        return llistaNumeros; // Es retorna la matriu
-
-    }
-    
-    /**
-     * Mètode per omplir la matriu.
-     * @param matriu Matriu que serà omplerta.
-     */
-    public static void omplirMatriu(int[][] matriu) {
-        
-        // Declaració de variables
-        int num; // Variable per emmagatzemar els nombres
-        // Controla si el nombre introduït és vàlid
-        boolean numCorrecte = false;
-        
-        // Primer "for" per recòrrer la matriu per files
-        for (int i = 0; i < matriu.length; i++) {
-            // S'imprimeix la línia on estem situats
-            System.out.println("--- Fila " + (i + 1) + " ---");
-            // Segon "for" per recòrrer la matriu per columnes
-            for (int j = 0; j < matriu[i].length; j++) {
-                /* 
-                    Bucle per assegurar-se que l'usuari introdueix un número enter
-                    positiu
-                */
-                do {
-                    Scanner sc = new Scanner(System.in);
-                    System.out.print("Columna " + (j + 1) + " : ");
-                    if (sc.hasNextInt()) {
-                        // Si és enter guarda guarda el valor en la variable
-                        num = sc.nextInt();
-                        if (num <= 0) {
-                            // Si no és positiu surt un missatge d'error
-                            System.err.println("ERROR. No és un nombre positiu.");
-                        } else {
-                            // Si és, surt del bucle
-                            numCorrecte = true;
-                        }
-                    } else {
-                        // Si no és enter surt un missatge d'error
-                        System.err.println("ERROR. No és un nombre enter.");
-                    }
-                } while (!numCorrecte);
-                
-            }
-        }
+        // Retorna el resultat de longitud
+        return longitud;
     }
 
 }

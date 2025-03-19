@@ -11,42 +11,78 @@ package com.mycompany.elsquadratsmagics;
  */
 public class QuadratMagic {
 
+    // Declaració d'atributs
+    int[][] matriu; // Matriu que representa el quadrat
+    int longitud; // Longitud de les files i columnes
+    // Final per definir la longitud per defecte
+    final static int LONGITUD_DEFECTE = 3;
+
     /**
-     * Constructor buit de la classe, ja que no en té d'atributs la classe
+     * Constructor per defecte. Inicialitza una matriu de 3x3
      */
     public QuadratMagic() {
-
+        this.longitud = LONGITUD_DEFECTE;
+        this.matriu = new int[LONGITUD_DEFECTE][LONGITUD_DEFECTE];
     }
 
     /**
-     * Mètode que comprova si la matriu introduïda és un quadrat màgic.
+     * Constructor amb longitud personalitzada
      *
-     * @param matriu Matriu a comprovar.
-     * @return Retorna true si és un quadrat màgic i false si no ho és.
+     * @param longitud mida del quadrat
+     */
+    public QuadratMagic(int longitud) {
+        this.longitud = longitud;
+        this.matriu = new int[longitud][longitud];
+    }
+
+    /**
+     * Getter de longitud
+     *
+     * @return longitud
+     */
+    public int getLongitud() {
+        return longitud;
+    }
+
+    /**
+     * Mètode per assignar un valor en cada posició de la matriu
+     *
+     * @param fila Posició de la fila
+     * @param columna Posició de la columna
+     * @param valor Valor a assignar
+     */
+    public void setValorMatriu(int fila, int columna, int valor) {
+        matriu[fila][columna] = valor;
+    }
+
+    /**
+     * Mètode que comprova si la matriu introduïda és un quadrat màgic
+     *
+     * @param matriu Matriu a comprovar
+     * @return Retorna true si és un quadrat màgic i false si no ho és
      */
     public boolean esMagic(int[][] matriu) {
 
         // Declaracions de variables
-        // Variable booleana per indicar si la matriu és màgica o no
-        boolean magic = true;
-        // Nombre de files i columnes de la matriu
-        int n = matriu.length, l = matriu.length;
         // Arrays per emmagatzemar la suma de cada fila i columna
-        int sumaFiles[] = new int[n], sumaColumnes[] = new int[l];
+        int suma = 0, sumaFiles = 0, sumaColumnes = 0;
         // Variables per a les sumes de les diagonals
         int sumaDiago1 = 0, sumaDiago2 = 0;
+        
+        final int VALOR_INICI = 0;
+
+        // Calcula la suma de la primera fila per usar com a referència
+        for (int j = 0; j < longitud; j++) {
+            // Suma dels valors de la primera fila
+            suma += matriu[VALOR_INICI][j];// Guarda la suma com a referència
+        }
 
         /*
             for per recòrrer la matriu per calcular les sumes de files, columnes
             i diagonals
          */
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-
-                // Suma dels valors de cada fila
-                sumaFiles[i] += matriu[i][j];
-                // Suma els valors de cada columna
-                sumaColumnes[j] += matriu[i][j];
+        for (int i = 0; i < this.longitud; i++) {
+            for (int j = 0; j < this.longitud; j++) {
 
                 // Suma dels valors de la diagonal
                 if (i == j) {
@@ -59,7 +95,7 @@ public class QuadratMagic {
                 }
 
                 // Suma dels valors de la diagonal invertida
-                if (i + j == n - 1) {
+                if (i + j == (this.longitud - 1)) {
                     /*
                         En comptes de comprovar que siguin iguals, si sumem
                         les dues posicions i comperem amb un contador a l'inversa
@@ -68,28 +104,54 @@ public class QuadratMagic {
                     sumaDiago2 += matriu[i][j];
                 }
             }
+
         }
 
-        // Emmagatzamem la suma de la primera fila per fer la comparació
-        int suma = sumaFiles[0];
-
-        // Fa el recorregut de les dues arrays creades per realitzar la suma
-        for (int i = 0; i < n; i++) {
-            if (sumaFiles[i] != suma || sumaColumnes[i] != suma) {
-                /* 
-                    Si troba alguna fila o columna que no és igual el quadrat
-                    no serà un quadrat màgic
-                */
-                magic = false;
+        // Comprova sumes de files
+        for (int i = 0; i < longitud; i++) {
+            sumaFiles = 0; // Reinicia cada cop que pasa de fila a 0
+            for (int j = 0; j < longitud; j++) {
+                // Suma cada valor de la fila
+                sumaFiles += matriu[i][j];
+            }
+            // Comprova cada cop si és igual a la suma de referència
+            if (suma != sumaFiles) {
+                // Si no són iguals retorna false
+                return false;
             }
         }
 
-        // El mateix però amb les diagonals
-        if (sumaDiago1 != suma || sumaDiago2 != suma) {
-            magic = false;
+        // Comprova sumes de columnes
+        for (int j = 0; j < longitud; j++) {
+            sumaColumnes = 0; // Reinicia cada cop que pasa de columna a 0
+            for (int i = 0; i < longitud; i++) {
+                // Suma cada valor de la columna
+                sumaColumnes += matriu[i][j];
+            }
+            // Comprova cada cop si és igual a la suma de referència
+            if (suma != sumaColumnes) {
+                // Si no són iguals retorna false
+                return false;
+            }
         }
 
-        return magic; // Retorna el valor de magic
+        // Comprova si ambdues diagonals són iguals a la suma de referència
+        if (sumaDiago1 != suma || sumaDiago2 != suma) {
+            // Si un dels dos no ho és, retorna false
+            return false;
+        }
+
+        // Si tot és igual retorna true
+        return true;
+    }
+
+    /**
+     * Mètode toString
+     * @return una cadena de text amb els valors dels atributs
+     */
+    @Override
+    public String toString() {
+        return "QuadratMagic{" + "matriu=" + matriu + ", longitud=" + longitud + '}';
     }
 
 }
